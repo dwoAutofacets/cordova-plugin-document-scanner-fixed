@@ -1,0 +1,68 @@
+{
+  "_args": [
+    [
+      "cordova-plugin-document-scanner@4.2.7",
+      "/Users/madhavanadkat/Projects/phonegap/dwo/dwo_new/BOS-DWO-Mobile-New"
+    ]
+  ],
+  "_from": "cordova-plugin-document-scanner@4.2.7",
+  "_id": "cordova-plugin-document-scanner@4.2.7",
+  "_inBundle": false,
+  "_integrity": "sha512-okUUe9jhIwZfEQIj6DfomGbDrA3z6iBLH3UdzrY1THMkm8lA5qfWgpDI2C1oVtvEJApnu5KOp8KFiQ6opKR+/A==",
+  "_location": "/cordova-plugin-document-scanner",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "cordova-plugin-document-scanner@4.2.7",
+    "name": "cordova-plugin-document-scanner",
+    "escapedName": "cordova-plugin-document-scanner",
+    "rawSpec": "4.2.7",
+    "saveSpec": null,
+    "fetchSpec": "4.2.7"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/cordova-plugin-document-scanner/-/cordova-plugin-document-scanner-4.2.7.tgz",
+  "_spec": "4.2.7",
+  "_where": "/Users/madhavanadkat/Projects/phonegap/dwo/dwo_new/BOS-DWO-Mobile-New",
+  "author": {
+    "name": "jatahworx"
+  },
+  "bugs": {
+    "url": "https://github.com/NeutrinosPlatform/cordova-plugin-document-scanner/issues"
+  },
+  "cordova": {
+    "id": "cordova-plugin-document-scanner",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "description": "cordova plugin for document scanner",
+  "engines": {
+    "cordovaDependencies": {
+      "cordova-android": ">=6.4.0",
+      "cordova-ios": ">=4.5.4"
+    }
+  },
+  "homepage": "https://github.com/NeutrinosPlatform/cordova-plugin-document-scanner#readme",
+  "keywords": [
+    "cordova",
+    "camera",
+    "document",
+    "scan",
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios",
+    "document scanner"
+  ],
+  "license": "ISC",
+  "name": "cordova-plugin-document-scanner",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NeutrinosPlatform/cordova-plugin-document-scanner.git"
+  },
+  "version": "4.2.7"
+}
