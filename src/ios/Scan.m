@@ -35,7 +35,7 @@
         id returnBase64 = [[_commandglo arguments] objectAtIndex:3];
         
         CGFloat floatQuality = [quality floatValue];
-        floatQuality = 1 - (floatQuality - 1)/4; // 1 - 1(quality - 1)/(max - 1)
+        floatQuality = 0.5; // 1 - 1(quality - 1)/(max - 1)
         NSData *imgData = UIImageJPEGRepresentation(page_image,floatQuality);
         if([returnBase64 boolValue]) {
             CDVPluginResult* result = [CDVPluginResult
