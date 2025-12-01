@@ -33,10 +33,17 @@
 
         NSDecimalNumber *quality = [[_commandglo arguments] objectAtIndex:2];
         id returnBase64 = [[_commandglo arguments] objectAtIndex:3];
-        
+        NSLog(@"Image Orientation: %ld", (long)page_image.imageOrientation);
+            
         CGFloat floatQuality = [quality floatValue];
         floatQuality = 0.5; // 1 - 1(quality - 1)/(max - 1)
-        NSData *imgData = UIImageJPEGRepresentation(page_image,floatQuality);
+        [self printAllImageMetadata:page_image];
+        
+        UIImage *fixedImage = [self fixOrientationFully:page_image];
+        NSData *imgData = UIImageJPEGRepresentation(fixedImage, floatQuality);
+        
+        //NSData *imgData = UIImageJPEGRepresentation(page_image,floatQuality);
+        [self printAllImageMetadata:fixedImage];
         if([returnBase64 boolValue]) {
             CDVPluginResult* result = [CDVPluginResult
                                        resultWithStatus:CDVCommandStatus_OK
@@ -67,6 +74,117 @@
         }
     }];
 }
+
+- (UIImage *)fixOrientationFully:(UIImage *)image {
+
+    if (image.imageOrientation == UIImageOrientationUp) {
+        return image;
+    }
+
+    CGAffineTransform transform = CGAffineTransformIdentity;
+
+    switch (image.imageOrientation) {
+        case UIImageOrientationDown:
+        case UIImageOrientationDownMirrored:
+            transform = CGAffineTransformTranslate(transform, image.size.width, image.size.height);
+            transform = CGAffineTransformRotate(transform, M_PI);
+            break;
+
+        case UIImageOrientationLeft:
+        case UIImageOrientationLeftMirrored:
+            transform = CGAffineTransformTranslate(transform, image.size.width, 0);
+            transform = CGAffineTransformRotate(transform, M_PI_2);
+            break;
+
+        case UIImageOrientationRight:
+        case UIImageOrientationRightMirrored:
+            transform = CGAffineTransformTranslate(transform, 0, image.size.height);
+            transform = CGAffineTransformRotate(transform, -M_PI_2);
+            break;
+        default:
+            break;
+    }
+
+    switch (image.imageOrientation) {
+        case UIImageOrientationUpMirrored:
+        case UIImageOrientationDownMirrored:
+            transform = CGAffineTransformTranslate(transform, image.size.width, 0);
+            transform = CGAffineTransformScale(transform, -1, 1);
+            break;
+
+        case UIImageOrientationLeftMirrored:
+        case UIImageOrientationRightMirrored:
+            transform = CGAffineTransformTranslate(transform, image.size.height, 0);
+            transform = CGAffineTransformScale(transform, -1, 1);
+            break;
+        default:
+            break;
+    }
+
+    CGContextRef ctx = CGBitmapContextCreate(NULL,
+                                             image.size.width,
+                                             image.size.height,
+                                             CGImageGetBitsPerComponent(image.CGImage),
+                                             0,
+                                             CGImageGetColorSpace(image.CGImage),
+                                             CGImageGetBitmapInfo(image.CGImage));
+
+    CGContextConcatCTM(ctx, transform);
+
+    switch (image.imageOrientation) {
+        case UIImageOrientationLeft:
+        case UIImageOrientationLeftMirrored:
+        case UIImageOrientationRight:
+        case UIImageOrientationRightMirrored:
+            CGContextDrawImage(ctx,
+                               CGRectMake(0, 0, image.size.height, image.size.width),
+                               image.CGImage);
+            break;
+
+        default:
+            CGContextDrawImage(ctx,
+                               CGRectMake(0, 0, image.size.width, image.size.height),
+                               image.CGImage);
+            break;
+    }
+
+    CGImageRef cgImage = CGBitmapContextCreateImage(ctx);
+    UIImage *fixedImage = [UIImage imageWithCGImage:cgImage scale:image.scale orientation:UIImageOrientationUp];
+
+    CGContextRelease(ctx);
+    CGImageRelease(cgImage);
+
+    return fixedImage;
+}
+
+
+- (void)printAllImageMetadata:(UIImage *)image {
+    NSData *data = UIImageJPEGRepresentation(image, 1.0);
+    CGImageSourceRef imageSource = CGImageSourceCreateWithData((__bridge CFDataRef)data, NULL);
+
+    if (imageSource) {
+        NSDictionary *metadata = (__bridge NSDictionary *)CGImageSourceCopyPropertiesAtIndex(imageSource, 0, NULL);
+        NSLog(@"Metadata Dump: %@", metadata);
+        CFRelease(imageSource);
+    }
+}
+
+- (UIImage *)forceUpOrientation:(UIImage *)image {
+
+    if (image.imageOrientation == UIImageOrientationUp) {
+        return image;
+    }
+
+    CGSize size = image.size;
+
+    UIGraphicsBeginImageContextWithOptions(size, NO, image.scale);
+    [image drawInRect:CGRectMake(0, 0, size.width, size.height)];
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+
+    return newImage;
+}
+
 
 -(void)didCancelIRLScannerViewController:(IRLScannerViewController *)cameraView {
     [cameraView dismissViewControllerAnimated:YES completion:nil];
